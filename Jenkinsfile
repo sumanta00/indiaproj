@@ -1,8 +1,9 @@
 pipeline {
   agent any
+
   tools {
-    jdk 'Java17'
-    maven 'Maven'
+    jdk 'JDK21'
+    maven 'Maven-3.9.12'
   }
 
   stages {
@@ -16,7 +17,7 @@ pipeline {
 
     stage('Test Code') {
       steps {
-        echo 'Running JUnit tests'
+        echo 'Running JUnit Tests'
         bat 'mvn clean test'
       }
       post {
@@ -28,24 +29,24 @@ pipeline {
 
     stage('Build Project') {
       steps {
-        echo 'Building project'
+        echo 'Building JAR'
         bat 'mvn clean package -DskipTests'
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        echo 'Building Docker image'
-        bat 'docker build -t myjavaproj:1.0 .'
+        echo 'Building Docker Image'
+        bat 'docker build -t indiaproj:1.0 .'
       }
     }
 
     stage('Run Docker Container') {
       steps {
-        echo 'Starting Docker container'
+        echo 'Starting Docker Container'
         bat '''
-        docker rm -f myjavaproj-container || exit 0
-        docker run -d --name myjavaproj-container -p 8080:8080 myjavaproj:1.0
+        docker rm -f indiaproj-container || exit 0
+        docker run -d --name indiaproj-container -p 8080:8080 indiaproj:1.0
         '''
       }
     }
@@ -54,11 +55,10 @@ pipeline {
 
   post {
     success {
-      echo 'Build + Tests + Docker Run SUCCESSFUL!'
+      echo 'Build + Docker Run SUCCESS!'
     }
     failure {
       echo 'Pipeline FAILED!'
     }
   }
-
 }
